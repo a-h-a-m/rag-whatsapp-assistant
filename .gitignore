@@ -1,3 +1,26 @@
+# Virtual environment
 venv/
+
+# Environment variables
 .env
+
+# Python cache
 __pycache__/
+*.pyc
+
+# Runtime databases
+chat_history.db
+
+# Generated vector database
+vector_db/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Downloaded audio files
+*.oga
