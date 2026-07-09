@@ -2,7 +2,7 @@ from pathlib import Path
 import uuid
 import chromadb
 
-from app.providers.gemini.embeddings import GeminiEmbeddingProvider
+from app.providers.gemini.provider import GeminiProvider
 from app.rag.chunker import chunk_text
 
 
@@ -18,7 +18,7 @@ def build_index():
         "knowledge"
     )
 
-    embedding = GeminiEmbeddingProvider()
+    embedding = GeminiProvider()
 
     knowledge = Path("knowledge")
 
