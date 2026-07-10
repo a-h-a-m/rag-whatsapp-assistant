@@ -159,18 +159,23 @@ uvicorn app.main:app --reload
 whatsapp-ai-bot/
 │
 ├── app/
+│   ├── agents/
 │   ├── core/
+│   ├── database/
+│   ├── handlers/
+│   ├── memory/
 │   ├── providers/
 │   │   └── gemini/
 │   ├── rag/
 │   ├── routes/
 │   ├── services/
-│   ├── tests/
 │   └── main.py
 │
 ├── knowledge/
 │   ├── company.txt
 │   └── ...
+│
+├── tests/
 │
 ├── vector_db/
 │
