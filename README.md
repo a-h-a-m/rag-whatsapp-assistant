@@ -36,7 +36,13 @@ The goal was not only to learn individual technologies but also to understand ho
 
 ### RAG Question Answering
 
-![Chat Demo](docs/images/demo-rag.png)
+![RAG Demo](docs/images/demo-rag.png)
+
+---
+
+### WhatsApp Conversation
+
+![Chat Demo](docs/images/demo-chat.png)
 
 ---
 
