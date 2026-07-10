@@ -1,4 +1,4 @@
-from app.providers.gemini.provider import GeminiProvider
+from app.providers.gemini.chat import GeminiProvider
 from app.rag.service import answer_question
 
 

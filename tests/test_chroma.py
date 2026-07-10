@@ -1,4 +1,4 @@
-# app/tests/chroma_test.py
+# tests/test_chroma.py
 
 import chromadb
 

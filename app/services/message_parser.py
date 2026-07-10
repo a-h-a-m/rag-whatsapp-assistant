@@ -21,6 +21,14 @@ def extract_message(data):
             .get("textMessage")
         )
 
+    elif message_type == "extendedTextMessage":
+        result["text"] = (
+            message_data
+            .get("extendedTextMessageData", {})
+            .get("text")
+        )
+
+
     elif message_type == "audioMessage":
 
         result["audio_url"] = (

@@ -2,7 +2,7 @@ from pathlib import Path
 import uuid
 import chromadb
 
-from app.providers.gemini.provider import GeminiProvider
+from app.providers.gemini.chat import GeminiProvider
 from app.rag.chunker import chunk_text
 
 

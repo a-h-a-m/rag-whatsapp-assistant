@@ -1,8 +1,28 @@
-# WhatsApp AI Assistant
+# 🤖 WhatsApp AI Assistant
 
-A production-oriented AI-powered WhatsApp chatbot built with **Python** and **FastAPI** that integrates **Google Gemini**, **Retrieval-Augmented Generation (RAG)**, and **ChromaDB** to answer questions from a custom knowledge base and process voice messages.
+An AI-powered WhatsApp assistant built with **Python**, **FastAPI**, **Gemini**, and **ChromaDB**.
 
-This project is designed as a portfolio project for transitioning from software engineering into AI engineering, with an architecture that emphasizes modularity, maintainability, and extensibility.
+The assistant supports voice transcription, Retrieval-Augmented Generation (RAG), conversation memory, and tool-based reasoning to answer user questions intelligently through WhatsApp.
+
+---
+
+## Project Overview
+
+This project started as a migration from an existing PHP and Node.js WhatsApp bot into a modern Python architecture.
+
+Rather than simply replying with predefined messages, the assistant combines Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), conversation memory, and modular tools to provide context-aware responses.
+
+The project is designed as a learning platform for backend AI engineering concepts including FastAPI, vector databases, embeddings, prompt engineering, and AI agent architectures.
+
+---
+
+## Why I Built This
+
+I originally developed a WhatsApp bot using PHP and Node.js.
+
+To transition toward AI engineering, I decided to rebuild the entire project in Python while redesigning the architecture around modern AI engineering concepts such as Retrieval-Augmented Generation (RAG), AI agents, vector databases, and conversation memory.
+
+The goal was not only to learn individual technologies but also to understand how they fit together to build production-style AI applications.
 
 ---
 
@@ -10,13 +30,13 @@ This project is designed as a portfolio project for transitioning from software 
 
 ### Voice Transcription
 
-![Voice Demo](assets/demo-voice.png)
+![Voice Demo](docs/images/demo-voice.png)
 
 ---
 
-### Knowledge Base Q&A
+### RAG Question Answering
 
-![Chat Demo](assets/demo-rag.png)
+![Chat Demo](docs/images/demo-rag.png)
 
 ---
 
@@ -29,8 +49,12 @@ This project is designed as a portfolio project for transitioning from software 
 - Knowledge base indexing
 - Semantic search with vector embeddings
 - ChromaDB vector database
-- Conversation history storage
-- Modular provider architecture
+- Conversation memory with SQLite
+- Modular AI Agent architecture
+- Tool-based reasoning
+- Calculator tool
+- Time tool
+- Knowledge base search
 - FastAPI REST backend
 - Ready for Docker deployment
 
@@ -47,6 +71,7 @@ This project is designed as a portfolio project for transitioning from software 
 | Embeddings | Gemini Embeddings |
 | Database | SQLite |
 | HTTP Client | Requests |
+| Webhook | Green API |
 | Development Server | Uvicorn |
 | Tunnel | Cloudflared |
 | Version Control | Git |
@@ -112,6 +137,16 @@ uvicorn app.main:app --reload
 
 ---
 
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| GEMINI_API_KEY | Gemini API Key |
+| GREEN_API_INSTANCE_ID | Green API Instance |
+| GREEN_API_TOKEN | Green API Token |
+
+---
+
 ## Project Structure
 
 ```text
@@ -142,197 +177,88 @@ whatsapp-ai-bot/
 
 ---
 
-## System Architecture
+## High-Level Architecture
 
-```text
-                    WhatsApp
+```mermaid
+flowchart TD
 
-                        │
+    U[WhatsApp User]
 
-                        ▼
+    U -->|Message| G[Green API]
 
-               Green API Webhook
+    G -->|Webhook| F[FastAPI]
 
-                        │
+    F --> H[Message Handler]
 
-                        ▼
+    H --> A[AI Agent]
 
-                   FastAPI Server
+    A --> D{Tool Selector}
 
-                        │
+    D -->|Knowledge| R[RAG Tool]
 
-            ┌───────────┴───────────┐
+    D -->|Math| C[Calculator Tool]
 
-            ▼                       ▼
+    D -->|Time| T[Time Tool]
 
-      Voice Messages          Text Messages
+    R --> V[(ChromaDB)]
 
-            │                       │
+    V --> K[Knowledge Base]
 
-            ▼                       ▼
+    A --> M[(Conversation Memory)]
 
-     Audio Transcription      RAG Pipeline
+    M --> S[(SQLite)]
 
-            │                       │
+    A --> L[Gemini API]
 
-            ▼                       ▼
+    L --> A
 
-        Gemini API           Embedding Search
+    A --> F
 
-                                      │
+    F --> G
 
-                                      ▼
-
-                                 ChromaDB
-
-                                      │
-
-                                      ▼
-
-                               Relevant Context
-
-                                      │
-
-                                      ▼
-
-                              Prompt Construction
-
-                                      │
-
-                                      ▼
-
-                                Gemini Response
-
-                                      │
-
-                                      ▼
-
-                           WhatsApp Reply Message
+    G --> U
 ```
 
 ---
 
 ## RAG Pipeline
 
-```text
-User Question
+```mermaid
+flowchart LR
 
-      │
+    A[Question]
 
-      ▼
+    --> B[Generate Embedding]
 
-Generate Embedding
+    --> C[ChromaDB Search]
 
-      │
+    --> D[Retrieve Context]
 
-      ▼
+    --> E[Build Prompt]
 
-Search ChromaDB
+    --> F[Gemini]
 
-      │
-
-      ▼
-
-Retrieve Relevant Documents
-
-      │
-
-      ▼
-
-Construct Prompt
-
-      │
-
-      ▼
-
-Gemini LLM
-
-      │
-
-      ▼
-
-Final Answer
+    --> G[Answer]
 ```
 
 ---
 
 ## Voice Transcription Flow
 
-```text
-Voice Message
+```mermaid
+flowchart LR
 
-      │
+    A[Voice Note]
 
-      ▼
+    --> B[Green API]
 
-Webhook
+    --> C[Download Audio]
 
-      │
+    --> D[Gemini Transcription]
 
-      ▼
+    --> E[AI Agent]
 
-Download Audio
-
-      │
-
-      ▼
-
-Gemini Transcription
-
-      │
-
-      ▼
-
-Send Transcript
-```
-
----
-
-## Knowledge Base
-
-Knowledge is stored as plain text files inside:
-
-```text
-knowledge/
-```
-
-Example:
-
-```text
-Company Information
-
-Office hours:
-Monday-Friday
-
-Annual leave:
-14 days
-
-Remote work:
-Allowed with manager approval
-```
-
-The indexing process:
-
-```text
-TXT Files
-
-    │
-
-    ▼
-
-Chunking
-
-    │
-
-    ▼
-
-Embedding Generation
-
-    │
-
-    ▼
-
-Store in ChromaDB
+    --> F[WhatsApp Reply]
 ```
 
 ---
@@ -358,16 +284,51 @@ This command:
 
 ## Conversation Memory
 
-Conversation history is stored in SQLite.
+```mermaid
+flowchart LR
 
-Each message contains:
+    A[Incoming Message]
 
-- Chat ID
-- Role (user / assistant)
-- Message content
-- Timestamp
+    --> B[Load Recent Messages]
 
-This allows future implementation of conversational memory and AI agents.
+    --> C[AI Agent]
+
+    --> D[Generate Reply]
+
+    --> E[Save Conversation]
+
+    --> F[(SQLite)]
+```
+
+---
+
+## Agent Workflow
+
+```mermaid
+flowchart TD
+
+    Q[User Question]
+
+    --> S[Tool Selector]
+
+    --> T{Selected Tool}
+
+    T -->|Calculator| C[Calculator Tool]
+
+    T -->|Time| TI[Time Tool]
+
+    T -->|Knowledge| R[RAG Tool]
+
+    C --> A[Final Response]
+
+    TI --> A
+
+    R --> A
+
+    A --> G[Gemini Response Generator]
+
+    G --> U[User]
+```
 
 ---
 
@@ -381,49 +342,28 @@ This allows future implementation of conversational memory and AI agents.
 
 ---
 
-## Future Improvements
+## Learning Journey
 
-- LangChain integration
-- LangGraph AI agents
-- Tool calling
-- Function calling
-- PostgreSQL support
-- Redis caching
-- Docker Compose
-- Kubernetes deployment
-- Authentication
-- Admin dashboard
-- Multi-user support
-- OCR document ingestion
-- PDF knowledge ingestion
-- Streaming responses
-- Conversation summarization
-- Hybrid search (keyword + vector)
-- Metadata filtering
-- Automated evaluation
+This project documents my transition from traditional backend development to AI engineering.
 
----
+During development I learned:
 
-## Learning Objectives
-
-This project demonstrates practical experience with:
-
-- Python backend development
 - FastAPI
-- REST API integration
-- Google Gemini API
 - Prompt engineering
-- Retrieval-Augmented Generation (RAG)
-- Vector databases
 - Embeddings
-- Semantic search
-- WhatsApp automation
-- Modular software architecture
-- AI application development
+- ChromaDB
+- Retrieval-Augmented Generation (RAG)
+- AI Agent architecture
+- Tool calling
+- Conversation memory
+- REST API integration
+- WhatsApp webhook development
+
+The project continues to evolve as I explore more advanced AI engineering topics such as LangGraph, Docker, and multi-agent systems.
 
 ---
 
-## Status
+## Roadmap
 
 Current project status:
 
@@ -436,10 +376,51 @@ Current project status:
 - ✅ RAG Pipeline
 - ✅ Knowledge Base
 - ✅ Conversation Memory
-- 🚧 AI Agents
-- 🚧 Tool Calling
-- 🚧 LangGraph
+- ✅ AI Agents
+- ✅ Time Tool
+- ✅ Calculator Tool
+- 🚧 Weather Tool
+- 🚧 Web Search Tool
+- 🚧 OCR Tool
+- 🚧 PDF knowledge ingestion
+- 🚧 LangGraph integration
 - 🚧 Docker Deployment
+- 🚧 Automated tests with pytest
+- 🚧 CI/CD
+
+---
+
+## Planned Architecture
+
+```mermaid
+flowchart TD
+
+    User
+
+    --> WhatsApp
+
+    --> FastAPI
+
+    --> Agent
+
+    Agent --> Weather
+
+    Agent --> WebSearch
+
+    Agent --> OCR
+
+    Agent --> RAG
+
+    Agent --> Memory
+
+    Weather --> ExternalAPI
+
+    WebSearch --> SearchAPI
+
+    OCR --> GeminiVision
+
+    RAG --> ChromaDB
+```
 
 ---
 

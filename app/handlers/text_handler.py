@@ -1,30 +1,35 @@
-from app.rag.service import answer_question
-from app.services.memory import (
-    save_message,
-    get_history
-)
+# from app.rag.service import answer_question
+# from app.services.memory import (
+#     save_message,
+#     get_history
+# )
 
 
 
 def handle_text_message(
     message,
-    ai_provider,
+    agent,
     whatsapp_provider
 ):
+
+    text = message["text"]
+
+    print("=" * 50)
+    print("Incoming:", text)
 
     user_id = message["sender"]
 
 
-    save_message(
+    agent.memory.add_message(
         user_id,
         "user",
-        message["text"]
+        text
     )
 
 
-    history = get_history(
-        user_id
-    )
+    # history = get_history(
+    #     user_id
+    # )
 
 
     # ai_messages = []
@@ -44,22 +49,29 @@ def handle_text_message(
     #     )
 
 
-    answer = answer_question(
-        message["text"],
-        ai_provider,
-        history
-    )
+    # answer = answer_question(
+    #     message["text"],
+    #     agent,
+    #     history
+    # )
+    answer = agent.run(user_id, text)
 
+    print("Selected Tool:", answer.tool)
+    print(answer.query)
+    print("Tool Result:", answer.tool_result)
+    print("Final Response:", answer.response)
 
-    save_message(
+    print("=" * 50)
+
+    agent.memory.add_message(
         user_id,
         "assistant",
-        answer
+        answer.response
     )
 
 
 
     whatsapp_provider.send_text(
         user_id,
-        answer
+        answer.response
     )

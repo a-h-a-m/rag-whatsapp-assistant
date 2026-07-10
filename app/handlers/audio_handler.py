@@ -20,13 +20,12 @@ def handle_audio_message(
     )
 
 
-    if transcript:
-        transcript = "*[Auto Transcription]*" + "\n" + transcript
-    else:
+    if not transcript:
         transcript = "Transcription failed"
 
-    
-    whatsapp_provider.send_text(
-        sender,
-        transcript
-    )
+    return transcript
+
+    # whatsapp_provider.send_text(
+    #     sender,
+    #     transcript
+    # )
