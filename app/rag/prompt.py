@@ -3,15 +3,9 @@ def build_rag_prompt(contexts, question, history=None):
     context = "\n\n".join(contexts)
 
     if history:
-        conversation = "\n".join(
-            [
-                f"{role}: {content}"
-                for role, content in history
-            ]
-        )
+        conversation = "\n".join([f"{role}: {content}" for role, content in history])
     else:
         conversation = "No previous conversation."
-
 
     return f"""
 You are a helpful assistant.

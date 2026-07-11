@@ -1,5 +1,6 @@
 # Virtual environment
 venv/
+.venv/
 
 # Environment variables
 .env
@@ -7,12 +8,23 @@ venv/
 # Python cache
 __pycache__/
 *.pyc
+*.egg-info/
+.eggs/
 
 # Runtime databases
 chat_history.db
 
 # Generated vector database
 vector_db/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Ruff
+.ruff_cache/
 
 # IDE
 .vscode/

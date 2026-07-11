@@ -1,8 +1,8 @@
-from pathlib import Path
 import uuid
-import chromadb
+from pathlib import Path
 
 from app.providers.gemini.chat import GeminiProvider
+from app.rag.chroma import get_collection
 from app.rag.chunker import chunk_text
 
 
@@ -10,13 +10,7 @@ def build_index():
 
     print("BUILD INDEX STARTED")
 
-    client = chromadb.PersistentClient(
-        path="vector_db"
-    )
-
-    collection = client.get_or_create_collection(
-        "knowledge"
-    )
+    collection = get_collection()
 
     embedding = GeminiProvider()
 
@@ -27,24 +21,18 @@ def build_index():
     print("Files:", list(knowledge.glob("*")))
 
     for file in knowledge.glob("*.txt"):
-
         text = file.read_text()
 
         chunks = chunk_text(text)
 
         for chunk in chunks:
-
             vector = embedding.embed(chunk)
 
             collection.add(
                 ids=[str(uuid.uuid4())],
                 documents=[chunk],
                 embeddings=[vector],
-                metadatas=[
-                    {
-                        "source": file.name
-                    }
-                ]
+                metadatas=[{"source": file.name}],
             )
 
 

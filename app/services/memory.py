@@ -1,17 +1,11 @@
 from app.database.database import get_connection
 
 
-
-def save_message(
-    user_id,
-    role,
-    content
-):
+def save_message(user_id, role, content):
 
     conn = get_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -20,29 +14,18 @@ def save_message(
 
         VALUES (?, ?, ?)
         """,
-
-        (
-            user_id,
-            role,
-            content
-        )
+        (user_id, role, content),
     )
-
 
     conn.commit()
     conn.close()
 
 
-
-def get_history(
-    user_id,
-    limit=10
-):
+def get_history(user_id, limit=10):
 
     conn = get_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -56,17 +39,11 @@ def get_history(
 
         LIMIT ?
         """,
-
-        (
-            user_id,
-            limit
-        )
+        (user_id, limit),
     )
-
 
     rows = cursor.fetchall()
 
     conn.close()
-
 
     return list(reversed(rows))

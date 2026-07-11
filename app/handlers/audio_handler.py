@@ -1,24 +1,13 @@
 from app.services.media import download_audio
 
 
-def handle_audio_message(
-    message,
-    ai_provider,
-    whatsapp_provider
-):
+def handle_audio_message(message, ai_provider, whatsapp_provider):
 
-    sender = message["sender"]
+    # sender = message["sender"]
 
-    audio_file = download_audio(
-        message["audio_url"]
-    )
+    audio_file = download_audio(message["audio_url"])
 
-
-
-    transcript = ai_provider.transcribe(
-        audio_file
-    )
-
+    transcript = ai_provider.transcribe(audio_file)
 
     if not transcript:
         transcript = "Transcription failed"

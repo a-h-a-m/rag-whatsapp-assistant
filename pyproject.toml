@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-whatsapp-assistant"
+version = "0.1.0"
+description = "A modular WhatsApp AI assistant powered by FastAPI, Gemini, RAG, and ChromaDB."
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+
+line-length = 100
+
+target-version = "py312"
+
+
+[tool.ruff.lint]
+
+select = [
+    "E",
+    "F",
+    "I",
+]
+
+ignore = [
+    "E501",
+]
+
+[project.scripts]
+test = "pytest"
+lint = "ruff check ."
+format = "ruff format ."
+coverage = "pytest --cov=app"
+
+[tool.coverage.run]
+
+source = ["app"]
+
+
+[tool.coverage.report]
+
+exclude_lines = [
+    "if __name__ == .__main__.:",
+    "pragma: no cover",
+]

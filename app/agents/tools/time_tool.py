@@ -4,7 +4,6 @@ from app.agents.tool import Tool
 
 
 class TimeTool(Tool):
-
     @property
     def name(self):
         return "time"

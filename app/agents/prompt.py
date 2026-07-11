@@ -1,11 +1,6 @@
 def build_tool_prompt(tools, question, formatted_history):
 
-    tool_list = "\n".join(
-        [
-            f"- {tool.name}: {tool.description}"
-            for tool in tools
-        ]
-    )
+    tool_list = "\n".join([f"- {tool.name}: {tool.description}" for tool in tools])
 
     return f"""
 You are an AI assistant.

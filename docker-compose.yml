@@ -1,0 +1,17 @@
+services:
+  whatsapp-ai-assistant:
+    build: .
+
+    container_name: whatsapp-ai-assistant
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./vector_db:/app/vector_db
+      - ./knowledge:/app/knowledge
+
+    restart: unless-stopped

@@ -1,12 +1,12 @@
+from app.core.config import CHAT_HISTORY_DB
 from app.database.database import get_connection
 
 
-def init_database():
+def init_database(db_path=CHAT_HISTORY_DB):
 
-    conn = get_connection()
+    conn = get_connection(db_path)
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS messages (
@@ -22,7 +22,6 @@ def init_database():
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
-
 
     conn.commit()
 

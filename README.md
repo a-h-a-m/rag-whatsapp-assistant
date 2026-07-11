@@ -153,6 +153,28 @@ uvicorn app.main:app --reload
 
 ---
 
+## Running with Docker
+
+Build and start the application:
+
+```bash
+docker compose up --build
+```
+
+The API will be available at:
+
+```text
+http://localhost:8000/docs
+```
+
+To stop the application:
+
+```bash
+docker compose down
+```
+
+---
+
 ## Project Structure
 
 ```text

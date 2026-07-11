@@ -5,12 +5,7 @@
 # )
 
 
-
-def handle_text_message(
-    message,
-    agent,
-    whatsapp_provider
-):
+def handle_text_message(message, agent, whatsapp_provider):
 
     text = message["text"]
 
@@ -19,21 +14,13 @@ def handle_text_message(
 
     user_id = message["sender"]
 
-
-    agent.memory.add_message(
-        user_id,
-        "user",
-        text
-    )
-
+    agent.memory.add_message(user_id, "user", text)
 
     # history = get_history(
     #     user_id
     # )
 
-
     # ai_messages = []
-
 
     # for item in history:
 
@@ -47,7 +34,6 @@ def handle_text_message(
     #             ]
     #         }
     #     )
-
 
     # answer = answer_question(
     #     message["text"],
@@ -63,15 +49,6 @@ def handle_text_message(
 
     print("=" * 50)
 
-    agent.memory.add_message(
-        user_id,
-        "assistant",
-        answer.response
-    )
+    agent.memory.add_message(user_id, "assistant", answer.response)
 
-
-
-    whatsapp_provider.send_text(
-        user_id,
-        answer.response
-    )
+    whatsapp_provider.send_text(user_id, answer.response)

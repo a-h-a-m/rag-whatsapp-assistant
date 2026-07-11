@@ -2,7 +2,6 @@ from app.agents.tool import Tool
 
 
 class CalculatorTool(Tool):
-
     @property
     def name(self):
         return "calculator"

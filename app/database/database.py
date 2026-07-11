@@ -1,14 +1,9 @@
 import sqlite3
 
 
-DB_NAME = "chat_history.db"
+def get_connection(db_path):
 
-
-def get_connection():
-
-    conn = sqlite3.connect(
-        DB_NAME
-    )
+    conn = sqlite3.connect(db_path)
 
     conn.row_factory = sqlite3.Row
 
