@@ -65,7 +65,6 @@ pyproject_hooks==1.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 PyYAML==6.0.3
--e git+ssh://git@github.com/a-h-a-m/rag-whatsapp-assistant.git@8766214c729faff6ea0103b9d29a8cb004ff99b4#egg=rag_whatsapp_assistant
 referencing==0.37.0
 requests==2.34.2
 requests-oauthlib==2.0.0
