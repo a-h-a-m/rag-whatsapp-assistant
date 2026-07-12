@@ -1,5 +1,5 @@
 from app.agents.tool import Tool
-from app.rag.service import answer_question
+from app.rag.service import RAGService
 
 
 class RagTool(Tool):
@@ -19,5 +19,6 @@ class RagTool(Tool):
         return False
 
     def run(self, query):
+        rag = RAGService(self.ai)
 
-        return answer_question(query, self.ai)
+        return rag.answer_question(query)

@@ -1,81 +1,77 @@
 from unittest.mock import MagicMock, patch
 
-from app.rag.service import answer_question
+from app.rag.service import RAGService
 
 
 def test_answer_question():
     provider = MagicMock()
+    retriever = MagicMock(
+        return_value=["Annual leave policy"]
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
     provider.chat.return_value = "Annual leave is 12 days."
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=["Annual leave policy"],
-        ),
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ),
-    ):
-
-        result = answer_question(
-            "How many annual leave days?",
-            provider,
-        )
+    result = rag.answer_question(
+        "How many annual leave days?",
+    )
 
     assert result == "Annual leave is 12 days."
 
 def test_retrieve_context_called():
     provider = MagicMock()
+    retriever = MagicMock(
+        return_value=["Context"]
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
     provider.chat.return_value = "Answer"
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=["Context"],
-        ) as mock_retrieve,
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ),
-    ):
+    rag.answer_question(
+        "How many annual leave days?",
+    )
 
-        answer_question(
-            "How many annual leave days?",
-            provider,
-        )
-
-    mock_retrieve.assert_called_once_with(
+    retriever.assert_called_once_with(
         "How many annual leave days?",
         provider,
     )
 
 def test_build_prompt_called():
     provider = MagicMock()
-    provider.chat.return_value = "Answer"
-
     contexts = [
         "Annual leave policy",
         "Remote work policy",
     ]
+    retriever = MagicMock(
+        return_value=contexts
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
+    provider.chat.return_value = "Answer"
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=contexts,
-        ),
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ) as mock_prompt,
-    ):
+    rag.answer_question(
+        "How many annual leave days?",
+    )
 
-        answer_question(
-            "How many annual leave days?",
-            provider,
-        )
-
-    mock_prompt.assert_called_once_with(
+    prompt_builder.assert_called_once_with(
         contexts,
         "How many annual leave days?",
         None,
@@ -83,23 +79,22 @@ def test_build_prompt_called():
 
 def test_provider_called():
     provider = MagicMock()
+    retriever = MagicMock(
+        return_value=["Context"]
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
     provider.chat.return_value = "Answer"
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=["Context"],
-        ),
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ),
-    ):
-
-        answer_question(
-            "How many annual leave days?",
-            provider,
-        )
+    rag.answer_question(
+        "How many annual leave days?",
+    )
 
     provider.chat.assert_called_once_with(
         [
@@ -116,6 +111,17 @@ def test_provider_called():
 
 def test_history_passed():
     provider = MagicMock()
+    retriever = MagicMock(
+        return_value=["Context"]
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
     provider.chat.return_value = "Answer"
 
     history = [
@@ -129,24 +135,12 @@ def test_history_passed():
         },
     ]
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=["Context"],
-        ),
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ) as mock_prompt,
-    ):
+    rag.answer_question(
+        "How many annual leave days?",
+        history,
+    )
 
-        answer_question(
-            "How many annual leave days?",
-            provider,
-            history,
-        )
-
-    mock_prompt.assert_called_once_with(
+    prompt_builder.assert_called_once_with(
         ["Context"],
         "How many annual leave days?",
         history,
@@ -154,25 +148,24 @@ def test_history_passed():
 
 def test_empty_context():
     provider = MagicMock()
+    retriever = MagicMock(
+        return_value=[]
+    )
+    prompt_builder = MagicMock(
+        return_value="Prompt"
+    )
+    rag = RAGService(
+        provider,
+        retriever,
+        prompt_builder,
+    )
     provider.chat.return_value = "I couldn't find any relevant information."
 
-    with (
-        patch(
-            "app.rag.service.retrieve_context",
-            return_value=[],
-        ),
-        patch(
-            "app.rag.service.build_rag_prompt",
-            return_value="Prompt",
-        ) as mock_prompt,
-    ):
+    result = rag.answer_question(
+        "Unknown question",
+    )
 
-        result = answer_question(
-            "Unknown question",
-            provider,
-        )
-
-    mock_prompt.assert_called_once_with(
+    prompt_builder.assert_called_once_with(
         [],
         "Unknown question",
         None,

@@ -7,11 +7,10 @@ from app.agents.responder import ResponseGenerator
 # from app.agents.response_prompt import build_response_prompt
 from app.agents.result import AgentResult
 from app.agents.selector import ToolSelector
-
+from app.graph.workflow import create_graph
 
 class Agent:
     def __init__(self, provider, memory):
-
         self.ai = provider
         self.memory = memory
         self.tools = get_tools(provider)
@@ -22,24 +21,30 @@ class Agent:
 
         self.responder = ResponseGenerator(provider)
 
+        self.graph = create_graph(
+            tools=self.tools,
+            memory=self.memory,
+            selector=self.selector,
+            executor=self.executor,
+            responder=self.responder,
+        )
+
     def run(self, chat_id, question):
-
-        history = self.memory.get_recent_messages(chat_id, limit=10)
-
-        decision = self.selector.select(question, history)
-
-        tool, tool_result = self.executor.execute(decision)
-
-        if tool is None:
-            return AgentResult(
-                tool="unknown",
-                query=decision["query"],
-                tool_result=tool_result,
-                response="I don't know how to answer that.",
-            )
-
-        response = self.responder.generate(question, tool, tool_result)
+        state = self.graph.invoke(
+            {
+                "chat_id": chat_id,
+                "question": question,
+            },
+            config={
+                "configurable": {
+                    "thread_id": chat_id,
+                }
+            },
+        )
 
         return AgentResult(
-            tool=tool.name, query=decision["query"], tool_result=tool_result, response=response
+            tool=state["tool_name"],
+            query=state["decision"]["query"],
+            tool_result=state["tool_result"],
+            response=state["response"],
         )

@@ -160,7 +160,11 @@ def test_agent_calls_responder():
             FakeHistoryMemory()
         )
 
-        with patch.object(agent.responder, "generate") as mock_generate:
+        with patch.object(
+            agent.responder, 
+            "generate",
+            return_value="I'm fine.",
+        ) as mock_generate:
             agent.run("test-user", "How are you?")
 
             mock_generate.assert_called_once()
@@ -219,7 +223,11 @@ def test_agent_uses_history_limit():
             memory
         )
 
-        with patch.object(memory, "get_recent_messages") as mock_memory:
+        with patch.object(
+            memory, 
+            "get_recent_messages",
+            return_value=[],
+        ) as mock_memory:
             agent.run("test-user", "How are you?")
 
             mock_memory.assert_called_once_with(
