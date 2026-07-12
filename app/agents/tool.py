@@ -16,6 +16,6 @@ class Tool(ABC):
     def run(self, query):
         pass
 
-    @property
-    def requires_llm_response(self):
-        return True
+    # @property
+    # def requires_llm_response(self):
+    #     return True

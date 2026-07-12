@@ -1,19 +1,22 @@
 from app.graph.state import AgentState
-from app.agents.utils import get_tool
+
 
 class AgentGraph:
     def __init__(
         self,
         tools,
+        rag_graph,
         memory,
         selector,
-        executor,
         responder,
     ):
-        self.tools = tools
+        self.tools = {
+            tool.name: tool
+            for tool in tools
+        }
+        self.rag_graph = rag_graph
         self.memory = memory
         self.selector = selector
-        self.executor = executor
         self.responder = responder
 
     def load_history(self, state: AgentState):
@@ -36,23 +39,40 @@ class AgentGraph:
 
         return state
 
-    def execute_tool(self, state: AgentState):
-        tool, tool_result = self.executor.execute(
-            state["decision"]
-        )
+    def create_tool_node(self, tool):
+        def node(state: AgentState):
+            state["tool_result"] = tool.run(
+                state["decision"]["query"]
+            )
+            return state
 
-        state["tool_name"] = "unknown" if not tool else tool.name
-        state["tool_result"] = tool_result
+        return node
+
+    def run_rag(self, state: AgentState):
+        rag_state = self.rag_graph.invoke(
+            {
+                "question": state["decision"]["query"],
+                "history": state["history"],
+            }
+        )
+        state["tool_result"] = rag_state["answer"]
 
         return state
 
     def unknown_tool(self, state: AgentState):
+        state["tool_result"] = ""
         state["response"] = "I don't know how to answer that."
 
         return state
 
     def generate_response(self, state: AgentState):
-        tool = get_tool(self.tools, state["tool_name"])
+        tool_name = state["decision"]["tool"]
+        
+        tool = None
+
+        if tool_name in self.tools:
+            tool = self.tools[tool_name]
+
         response = self.responder.generate(
             state["question"],
             tool,
@@ -63,9 +83,10 @@ class AgentGraph:
 
         return state
 
-    def route_after_execution(self, state: AgentState):
-        tool = get_tool(self.tools, state["tool_name"])
-        if tool is None:
-            return "unknown_tool"
+    def route_tool(self, state: AgentState):
+        tool_name = state["decision"]["tool"]
 
-        return "generate_response"
+        if tool_name in self.tools:
+            return tool_name
+
+        return "unknown_tool"

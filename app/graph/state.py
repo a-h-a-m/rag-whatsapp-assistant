@@ -9,8 +9,6 @@ class AgentState(TypedDict):
 
     decision: dict[str, Any]
 
-    tool_name: str
-
     tool_result: Any | None
 
     response: str | None

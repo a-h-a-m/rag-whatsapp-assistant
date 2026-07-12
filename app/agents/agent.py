@@ -9,24 +9,30 @@ from app.agents.result import AgentResult
 from app.agents.selector import ToolSelector
 from app.graph.workflow import create_graph
 
+
 class Agent:
-    def __init__(self, provider, memory):
+    def __init__(
+        self, 
+        provider, 
+        memory, 
+        rag_graph,
+        checkpointer=None
+    ):
         self.ai = provider
         self.memory = memory
-        self.tools = get_tools(provider)
+        self.tools = get_tools()
 
         self.selector = ToolSelector(provider, self.tools)
-
-        self.executor = ToolExecutor(self.tools)
 
         self.responder = ResponseGenerator(provider)
 
         self.graph = create_graph(
             tools=self.tools,
+            rag_graph=rag_graph,
             memory=self.memory,
             selector=self.selector,
-            executor=self.executor,
             responder=self.responder,
+            checkpointer=checkpointer
         )
 
     def run(self, chat_id, question):
@@ -43,7 +49,7 @@ class Agent:
         )
 
         return AgentResult(
-            tool=state["tool_name"],
+            tool=state["decision"]["tool"],
             query=state["decision"]["query"],
             tool_result=state["tool_result"],
             response=state["response"],

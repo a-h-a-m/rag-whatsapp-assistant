@@ -7,8 +7,8 @@ class ResponseGenerator:
 
     def generate(self, question, tool, tool_result):
 
-        if not tool.requires_llm_response:
-            return tool_result
+        # if not tool.requires_llm_response:
+        #     return tool_result
 
         prompt = build_response_prompt(question, tool.name, tool_result)
 

@@ -3,6 +3,7 @@ from langgraph.graph import END, START, StateGraph
 from app.rag.graph.rag_graph import RAGGraph
 from app.rag.graph.state import RAGState
 
+
 def create_graph(
     provider,
     retriever,

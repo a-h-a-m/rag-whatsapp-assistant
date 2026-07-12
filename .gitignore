@@ -13,6 +13,7 @@ __pycache__/
 
 # Runtime databases
 chat_history.db
+data/*.db
 
 # Generated vector database
 vector_db/

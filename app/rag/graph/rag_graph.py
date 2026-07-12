@@ -1,5 +1,6 @@
 from app.rag.graph.state import RAGState
 
+
 class RAGGraph:
     def __init__(
         self,

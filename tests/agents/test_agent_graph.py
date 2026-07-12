@@ -1,8 +1,12 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 # from app.providers.gemini.chat import GeminiProvider
 from app.agents.agent import Agent
 
+fake_rag_graph = MagicMock()
+fake_rag_graph.invoke.return_value = {
+    "answer": "Fake RAG answer",
+}
 
 class FakeMemory:
     def get_recent_messages(self, chat_id, limit=10):
@@ -38,7 +42,7 @@ class FakeAIProvider:
 class FakeTool:
     name = "fake"
     description = "Fake tool for testing."
-    requires_llm_response = True
+    # requires_llm_response = True
 
     def run(self, query):
         return f"received: {query}"
@@ -46,7 +50,7 @@ class FakeTool:
 class FakeHistoryTool:
     name = "fake"
     description = "Fake tool for testing."
-    requires_llm_response = True
+    # requires_llm_response = True
 
     def run(self, query):
         return "tool output"
@@ -67,7 +71,8 @@ def test_agent_selects_tool():
     ):
         agent = Agent(
             provider,
-            FakeMemory()
+            FakeMemory(),
+            fake_rag_graph
         )
 
         result = agent.run(
@@ -90,17 +95,18 @@ def test_agent_unknown_tool():
 
     agent = Agent(
         provider,
-        FakeMemory()
+        FakeMemory(),
+        fake_rag_graph
     )
 
-    with patch.object(agent.executor, "execute", return_value=(None, "Unknown tool")):
-        result = agent.run(
-            "test-user",
-            "do something impossible",
-        )
+    # with patch.object(agent.executor, "execute", return_value=(None, "Unknown tool")):
+    result = agent.run(
+        "test-user",
+        "do something impossible",
+    )
 
-        assert result.tool == "unknown"
-        assert result.response == "I don't know how to answer that."
+    assert result.tool == "unknown"
+    assert result.response == "I don't know how to answer that."
 
 def test_agent_passes_history_to_selector():
     provider = FakeAIProvider(
@@ -114,7 +120,8 @@ def test_agent_passes_history_to_selector():
 
     agent = Agent(
         provider,
-        FakeHistoryMemory()
+        FakeHistoryMemory(),
+        fake_rag_graph
     )
 
     history = [
@@ -157,7 +164,8 @@ def test_agent_calls_responder():
     ):
         agent = Agent(
             provider,
-            FakeHistoryMemory()
+            FakeMemory(),
+            fake_rag_graph
         )
 
         with patch.object(
@@ -191,7 +199,8 @@ def test_agent_returns_agent_result():
     ):
         agent = Agent(
             provider,
-            FakeMemory()
+            FakeMemory(),
+            fake_rag_graph
         )
 
         with patch.object(agent.responder, "generate", return_value="Hello!"):
@@ -220,7 +229,8 @@ def test_agent_uses_history_limit():
     ):
         agent = Agent(
             provider,
-            memory
+            memory,
+            fake_rag_graph
         )
 
         with patch.object(
